@@ -1,8 +1,8 @@
 #ifndef TEXT_HEADER
 #define TEXT_HEADER
 
-#define JAPANESE 0
-#define ENGLISH 1
+#define JAPANESE 1
+#define ENGLISH 0
 
 char gameLanguage;
 

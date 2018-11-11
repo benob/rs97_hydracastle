@@ -6,6 +6,7 @@
 #include "scale.h"
 
 SDL_Surface* screen = NULL;
+SDL_Surface* realscreen = NULL;
 SDL_Surface* drawbuffer = NULL;
 SDL_Surface* backbuffer = NULL;
 
@@ -16,8 +17,8 @@ int desktopFS = 0;
 int deltaX = 0;
 int deltaY = 0;
 
-int screenW = 640;
-int screenH = 480;
+int screenW = 320;
+int screenH = 240;
 
 int drawscreen = 0;
 
@@ -35,6 +36,8 @@ int getXBRZ()
 
 void setXBRZ(int active)
 {
+    xbrz = 0;
+    return;
 	if(active) active = 1;
 	if(xbrz==active) return;
 	xbrz = active;
@@ -57,10 +60,11 @@ void PHL_GraphicsInit()
 
 	Input_InitJoystick();
     
-    uint32_t flags = SDL_HWSURFACE|SDL_DOUBLEBUF;
+    uint32_t flags = SDL_SWSURFACE|SDL_DOUBLEBUF;
 	if(wantFullscreen || desktopFS)
     	flags |= SDL_FULLSCREEN;
-    screen = SDL_SetVideoMode((desktopFS)?0:screenW, (desktopFS)?0:screenH, 0, flags);
+    //screen = SDL_SetVideoMode((desktopFS)?0:screenW, (desktopFS)?0:screenH, 0, flags);
+    realscreen = SDL_SetVideoMode(320, 480, 16, flags);
 	if(desktopFS)
 	{
 		const SDL_VideoInfo* infos = SDL_GetVideoInfo();
@@ -73,9 +77,13 @@ void PHL_GraphicsInit()
 		deltaX = (screenW-320*screenScale)/2;
 		deltaY = (screenH-240*screenScale)/2;
 	}
+    screenScale = 1;
+	screen = SDL_CreateRGBSurface(0, 320, 240, 16, realscreen->format->Rmask, realscreen->format->Gmask, realscreen->format->Bmask, realscreen->format->Amask);
+	//screen = SDL_CreateRGBSurface(0, 320, 240, 32, 0, 0, 0, 0);
 	drawbuffer = screen;
 	drawscreen = 1;
-	backbuffer = SDL_CreateRGBSurface(0, 320*screenScale, 240*screenScale, 32, 0, 0, 0, 0);
+	//backbuffer = SDL_CreateRGBSurface(0, 320*screenScale, 240*screenScale, 32, 0, 0, 0, 0);
+	backbuffer = SDL_CreateRGBSurface(0, 320, 240, 16, realscreen->format->Rmask, realscreen->format->Gmask, realscreen->format->Bmask, realscreen->format->Amask);
 	tframe = SDL_GetTicks();
 }
 
@@ -115,7 +123,23 @@ void PHL_EndDrawing()
 		SDL_FillRect(screen, &rect, SDL_MapRGB(screen->format, 0, 0, 0));
 	}
 
-    SDL_Flip(screen);
+    // double lines
+    SDL_LockSurface(screen);
+    SDL_LockSurface(realscreen);
+    for(int j = 0; j < screen->h; j++) {
+        memcpy((char*)realscreen->pixels + (j * 2) * realscreen->pitch, (char*)screen->pixels + j * screen->pitch, realscreen->w * 2);
+        /*for(int i = 0; i < screen->w; j++) {
+            Uint8 r, g, b, a;
+            SDL_GetRGBA(*(Uint32*)(screen->pixels + i * 4 + j * screen->pitch), screen->format, &r, &g, &b, &a);
+            Uint16 pixel = SDL_MapRGB(realscreen->format, r, g, b);
+            ((Uint16*)realscreen->pixels)[i + j * realscreen->pitch] = pixel;
+        }*/
+        memcpy((char*)realscreen->pixels + (j * 2 + 1) * realscreen->pitch, (char*)screen->pixels + j * screen->pitch, realscreen->w * 2);
+    }
+    SDL_UnlockSurface(screen);
+    SDL_UnlockSurface(realscreen);
+
+    SDL_Flip(realscreen);
 	while((tframe = SDL_GetTicks())<tnext)
         SDL_Delay(10);
 }
