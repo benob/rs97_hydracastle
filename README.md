@@ -1,5 +1,12 @@
 # Hydra Castle Labyrinth
 
+RS-97 port:
+
+In order for music to work, you need to convert the midi files to ogg vorbis.
+Install fluidsynth and a .sf2 sound font, and render the files with ./convert-audio.sh (edit it to set the correct sound bank).
+
+# Original README follows
+
 ![HCL build status](https://api.travis-ci.org/ptitSeb/hydracastlelabyrinth.png "HCL build status")
 
 This version of Hydra Castle Labyrinth is based on the 3DS port (see below for original notice)

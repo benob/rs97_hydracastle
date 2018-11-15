@@ -6,7 +6,7 @@ int music_volume = 4;
 void PHL_AudioInit()
 {
     SDL_InitSubSystem(SDL_INIT_AUDIO);
-    Mix_Init(0);
+    Mix_Init(MIX_INIT_OGG);
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
 
     PHL_MusicVolume(0.25f * music_volume);
@@ -26,8 +26,9 @@ PHL_Music PHL_LoadMusic(char* fname, int loop)
     char buff[4096];
     strcpy(buff, "data/");
     strcat(buff, fname);
-    strcat(buff, ".mid");
+    strcat(buff, ".mid.ogg");
     ret.snd = Mix_LoadMUS(buff);
+    printf("%s %p\n", buff, ret.snd);
     return ret;
 }
 
