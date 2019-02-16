@@ -7,6 +7,7 @@ void PHL_AudioInit()
 {
     SDL_InitSubSystem(SDL_INIT_AUDIO);
     Mix_Init(0);
+		Mix_SetSoundFonts("data/Zelda_3.sf2");
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
 
     PHL_MusicVolume(0.25f * music_volume);
