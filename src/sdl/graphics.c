@@ -87,8 +87,8 @@ void PHL_GraphicsInit()
 	//screen = SDL_CreateRGBSurface(0, 320, 240, 32, 0, 0, 0, 0);
 	drawbuffer = screen;
 	drawscreen = 1;
-	//backbuffer = SDL_CreateRGBSurface(0, 320*screenScale, 240*screenScale, 32, 0, 0, 0, 0);
-	backbuffer = SDL_CreateRGBSurface(0, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+	backbuffer = SDL_CreateRGBSurface(0, 320*screenScale, 240*screenScale, 32, 0, 0, 0, 0);
+	//backbuffer = SDL_CreateRGBSurface(0, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
 	tframe = SDL_GetTicks();
 }
 
