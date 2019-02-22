@@ -60,11 +60,14 @@ void PHL_GraphicsInit()
 
 	Input_InitJoystick();
     
-    uint32_t flags = SDL_SWSURFACE|SDL_DOUBLEBUF;
+    uint32_t flags = 0;
 	if(wantFullscreen || desktopFS)
     	flags |= SDL_FULLSCREEN;
-    //screen = SDL_SetVideoMode((desktopFS)?0:screenW, (desktopFS)?0:screenH, 0, flags);
-    realscreen = SDL_SetVideoMode(320, 480, 16, flags);
+#ifdef RS97_SCREEN_480
+    realscreen = SDL_SetVideoMode(320, 480, 16, flags | SDL_SWSURFACE | SDL_DOUBLEBUF);
+#else
+    screen = SDL_SetVideoMode((desktopFS)?0:screenW, (desktopFS)?0:screenH, 0, flags | SDL_HWSURFACE | SDL_DOUBLEBUF);
+#endif
 	if(desktopFS)
 	{
 		const SDL_VideoInfo* infos = SDL_GetVideoInfo();
@@ -78,12 +81,14 @@ void PHL_GraphicsInit()
 		deltaY = (screenH-240*screenScale)/2;
 	}
     screenScale = 1;
+#ifdef RS97_SCREEN_480
 	screen = SDL_CreateRGBSurface(0, 320, 240, 16, realscreen->format->Rmask, realscreen->format->Gmask, realscreen->format->Bmask, realscreen->format->Amask);
+#endif
 	//screen = SDL_CreateRGBSurface(0, 320, 240, 32, 0, 0, 0, 0);
 	drawbuffer = screen;
 	drawscreen = 1;
 	//backbuffer = SDL_CreateRGBSurface(0, 320*screenScale, 240*screenScale, 32, 0, 0, 0, 0);
-	backbuffer = SDL_CreateRGBSurface(0, 320, 240, 16, realscreen->format->Rmask, realscreen->format->Gmask, realscreen->format->Bmask, realscreen->format->Amask);
+	backbuffer = SDL_CreateRGBSurface(0, 320, 240, 16, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
 	tframe = SDL_GetTicks();
 }
 
@@ -123,6 +128,7 @@ void PHL_EndDrawing()
 		SDL_FillRect(screen, &rect, SDL_MapRGB(screen->format, 0, 0, 0));
 	}
 
+#ifdef RS97_SCREEN_480
     // double lines
     SDL_LockSurface(screen);
     SDL_LockSurface(realscreen);
@@ -138,8 +144,10 @@ void PHL_EndDrawing()
     }
     SDL_UnlockSurface(screen);
     SDL_UnlockSurface(realscreen);
-
     SDL_Flip(realscreen);
+#else
+    SDL_Flip(screen);
+#endif
 	while((tframe = SDL_GetTicks())<tnext)
         SDL_Delay(10);
 }

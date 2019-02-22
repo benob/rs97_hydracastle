@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 	#elif defined(ODROID)
 	desktopFS = 1;
 	#else
-	screenScale = 2;
+	screenScale = 1;
 	#endif
 	useJoystick = 1;
 	// get command line arguments
