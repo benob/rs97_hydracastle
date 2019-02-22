@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 		SDL_Delay(5000);
 		exit(EXIT_FAILURE);
 	}
-	#if defined(PANDORA) || defined(PYRA) || defined(CHIP) || defined(ODROID) || defined(RS97)
+	#if defined(PANDORA) || defined(PYRA) || defined(CHIP) || defined(ODROID) 
 	wantFullscreen = 1;
 	#else
 	wantFullscreen = 0;
@@ -60,12 +60,15 @@ int main(int argc, char **argv)
 	desktopFS = 1;
 	#elif defined(ODROID)
 	desktopFS = 1;
-  #elif defined(RS97)
-	screenScale = 1;
 	#else
 	screenScale = 2;
 	#endif
 	useJoystick = 1;
+
+	// RS97
+	screenScale = 1;
+	wantFullscreen = 1;
+
 	// get command line arguments
 	for (int i=1; i<argc; i++)
 	{
